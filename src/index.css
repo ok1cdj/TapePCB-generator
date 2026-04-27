@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --bg-main: #0f172a;
+  --accent-copper: #fb923c;
+  --accent-board: #22c55e;
+  --accent-drill: #ffffff;
+  --glass-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+@layer base {
+  body {
+    @apply bg-[#0f172a] text-[#f8fafc] font-sans selection:bg-orange-500/30;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-[var(--glass-bg)] backdrop-blur-[12px] border border-[var(--glass-border)] rounded-xl shadow-2xl;
+  }
+
+  .mesh-gradient {
+    position: fixed;
+    top: -50%; left: -50%; right: -50%; bottom: -50%;
+    background: radial-gradient(circle at 30% 30%, #1e1b4b 0%, transparent 40%),
+                radial-gradient(circle at 70% 70%, #064e3b 0%, transparent 40%);
+    z-index: -1;
+    pointer-events: none;
+  }
+}

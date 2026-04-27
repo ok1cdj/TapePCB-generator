@@ -1,0 +1,6 @@
+{
+  "name": "TapePCB",
+  "description": "TapePCB: A tool to visualize and convert PCB Gerber/Drill files into 3D printable STL models.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
