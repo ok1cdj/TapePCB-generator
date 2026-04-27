@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Download, Upload, Sliders, Layers, MousePointer2, ZoomIn, ZoomOut, FileText, Info, Trash2 } from 'lucide-react';
+import { Download, Upload, Sliders, Layers, MousePointer2, ZoomIn, ZoomOut, FileText, Info, Trash2, HelpCircle, Github, Coffee, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { parseGerber, parseDrill, BoundingBox, GerberPath, DrillHole } from './utils/parsers';
 import { generateSTL } from './utils/stlExporter';
@@ -14,6 +14,7 @@ export default function App() {
   const [boardThickness, setBoardThickness] = useState(1.6);
   const [traceExtrusion, setTraceExtrusion] = useState(0.6);
   const [viewMode, setViewMode] = useState<'fit' | 'zoom'>('fit');
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   
   const fileInputRefCopper = useRef<HTMLInputElement>(null);
   const fileInputRefProfile = useRef<HTMLInputElement>(null);
@@ -94,8 +95,8 @@ export default function App() {
       <aside className="w-80 h-full flex flex-col p-6 z-10 shrink-0">
         <div className="glass-panel h-full flex flex-col p-6 overflow-y-auto">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-              <span className="font-black text-white text-xl">T</span>
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img src="/icon.svg" className="w-10 h-10 drop-shadow-[0_0_15px_rgba(34,197,94,0.4)]" alt="TapePCB Logo" />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight">TapePCB</h1>
@@ -103,7 +104,7 @@ export default function App() {
             </div>
           </div>
 
-          <section className="space-y-6 flex-1">
+          <section className="space-y-6 flex-1 flex flex-col">
             {/* File Upload Area */}
             <div className="space-y-3">
               <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Layer Import</label>
@@ -154,7 +155,7 @@ export default function App() {
             </div>
 
             {/* Controls */}
-            <div className="space-y-6 pt-6 border-t border-white/5">
+            <div className="space-y-6 pt-6 border-t border-white/5 flex-1 flex flex-col">
               <div className="flex items-center gap-2 mb-4">
                 <Sliders className="w-4 h-4 text-white/40" />
                 <h2 className="text-[10px] font-black text-white/40 uppercase tracking-widest">Global Modifiers</h2>
@@ -228,7 +229,7 @@ export default function App() {
                 </div>
               </div>
               
-              <div className="mt-8">
+              <div className="mt-auto pt-6">
                 <button
                   onClick={() => {
                     if (!gerberData) return;
@@ -295,6 +296,14 @@ export default function App() {
               <span className="text-[10px] font-black text-white/40 uppercase tracking-widest mr-1">Hole Count</span>
               <span className="font-mono text-sm font-bold text-emerald-400 tracking-widest">{drillData.length}</span>
             </div>
+
+            <button
+              onClick={() => setIsHelpOpen(true)}
+              className="p-2 glass-panel border-white/10 hover:bg-white/10 transition-colors text-white/60 hover:text-white rounded-lg"
+              title="Help & Info"
+            >
+              <HelpCircle className="w-5 h-5" />
+            </button>
           </div>
         </header>
 
@@ -308,10 +317,6 @@ export default function App() {
                 exit={{ opacity: 0, scale: 1.05 }}
                 className="flex flex-col items-center text-center gap-8 max-w-sm"
               >
-                <div className="w-24 h-24 bg-white/5 border border-white/10 rounded-[2rem] flex items-center justify-center relative group">
-                  <div className="absolute inset-0 bg-orange-500/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <Upload className="text-orange-400 w-8 h-8 relative z-10" />
-                </div>
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold tracking-tight">Awaiting Gerber Input</h3>
                   <p className="text-white/40 text-sm leading-relaxed">
@@ -418,6 +423,77 @@ export default function App() {
           </AnimatePresence>
         </div>
       </main>
+
+      {/* Help Modal */}
+      <AnimatePresence>
+        {isHelpOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="bg-[#111827] border border-white/10 p-8 rounded-2xl max-w-lg w-full shadow-2xl relative"
+            >
+              <button 
+                onClick={() => setIsHelpOpen(false)}
+                className="absolute top-4 right-4 text-white/40 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center border border-emerald-500/30">
+                  <HelpCircle className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">TapePCB Guide</h2>
+                  <p className="text-white/40 text-sm">Convert your PCB files to 3D models.</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4 text-white/70 text-sm leading-relaxed mb-8">
+                <p>
+                  TapePCB renders your Gerber and Drill files in the browser and exports them to a monolithic STL file for 3D printing.
+                </p>
+                <ol className="list-decimal pl-5 space-y-2 marker:text-emerald-500">
+                  <li><strong>Bottom Copper (.gbr):</strong> Loads the bottom traces. Ensure you use bottom layer so traces are correctly projected.</li>
+                  <li><strong>Profile (.gbr):</strong> Board outline and milling data.</li>
+                  <li><strong>Drill (.drl):</strong> Excellon file containing holes.</li>
+                  <li><strong>Adjust settings:</strong> Tweak trace expansion, hole size modification, and board parameters.</li>
+                  <li><strong>Generate STL:</strong> Slices the data into Constructive Solid Geometry and downloads a ready-to-print file.</li>
+                </ol>
+              </div>
+              
+              <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-4">
+                <a 
+                  href="https://github.com/ok1cdj/TapePCB-generator/issues" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex-1 py-3 px-4 bg-white/5 hover:bg-white/10 text-white rounded-xl flex items-center justify-center gap-2 transition-colors border border-white/5"
+                >
+                  <Github className="w-4 h-4" />
+                  <span>Report an Issue</span>
+                </a>
+                <a 
+                  href="https://buymeacoffee.com/ok1cdj" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex-1 py-3 px-4 bg-[#FFDD00] hover:bg-[#FFDD00]/90 text-black rounded-xl font-bold flex items-center justify-center gap-2 transition-colors"
+                >
+                  <Coffee className="w-4 h-4" />
+                  <span>Buy me a coffee</span>
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
