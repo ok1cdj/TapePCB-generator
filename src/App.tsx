@@ -144,13 +144,13 @@ export default function App() {
                   </div>
                   <div className="text-left">
                     <span className="text-sm font-semibold block leading-tight">Drill Data</span>
-                    <span className="text-[10px] text-white/40">Excellon (.drl)</span>
+                    <span className="text-[10px] text-white/40">Excellon (.drl, .xln)</span>
                   </div>
                 </button>
 
                 <input type="file" ref={fileInputRefCopper} className="hidden" accept=".gbr,.gerber" onChange={(e) => handleFileUpload(e, 'copper')} />
                 <input type="file" ref={fileInputRefProfile} className="hidden" accept=".gbr,.gerber" onChange={(e) => handleFileUpload(e, 'profile')} />
-                <input type="file" ref={fileInputRefDrill} className="hidden" accept=".drl,.drill" onChange={(e) => handleFileUpload(e, 'drill')} />
+                <input type="file" ref={fileInputRefDrill} className="hidden" accept=".drl,.drill,.xln" onChange={(e) => handleFileUpload(e, 'drill')} />
               </div>
             </div>
 
@@ -287,15 +287,19 @@ export default function App() {
           </div>
 
           <div className="flex gap-4 items-center">
-            <div className="glass-panel px-4 py-2 border-white/10 flex gap-4 items-center">
-              <span className="text-[10px] font-black text-white/40 uppercase tracking-widest mr-1">Board Dimensions</span>
-              <span className="font-mono text-sm font-bold text-white tracking-widest">{pcbWidth.toFixed(2)} × {pcbHeight.toFixed(2)} mm</span>
-            </div>
+            {(gerberData || profileData) && (
+              <div className="glass-panel px-4 py-2 border-white/10 flex gap-4 items-center">
+                <span className="text-[10px] font-black text-white/40 uppercase tracking-widest mr-1">Board Dimensions</span>
+                <span className="font-mono text-sm font-bold text-white tracking-widest">{pcbWidth.toFixed(2)} × {pcbHeight.toFixed(2)} mm</span>
+              </div>
+            )}
 
-            <div className="glass-panel px-4 py-2 border-white/10 flex gap-4 items-center">
-              <span className="text-[10px] font-black text-white/40 uppercase tracking-widest mr-1">Hole Count</span>
-              <span className="font-mono text-sm font-bold text-emerald-400 tracking-widest">{drillData.length}</span>
-            </div>
+            {drillData.length > 0 && (
+              <div className="glass-panel px-4 py-2 border-white/10 flex gap-4 items-center">
+                <span className="text-[10px] font-black text-white/40 uppercase tracking-widest mr-1">Hole Count</span>
+                <span className="font-mono text-sm font-bold text-emerald-400 tracking-widest">{drillData.length}</span>
+              </div>
+            )}
 
             <button
               onClick={() => setIsHelpOpen(true)}
@@ -383,8 +387,10 @@ export default function App() {
                         strokeWidth={Math.max(0.01, trace.apertureSize * traceExpansion)}
                         strokeLinecap="round"
                         opacity={0.8}
-                        className="transition-[stroke-width] duration-300"
-                      />
+                        className="transition-[stroke-width] duration-300 hover:opacity-100 hover:stroke-orange-300 cursor-pointer pointer-events-auto"
+                      >
+                        <title>Expanded: {(trace.apertureSize * traceExpansion).toFixed(3)} mm (Original: {trace.apertureSize.toFixed(3)} mm)</title>
+                      </line>
                     ))}
                   </g>
 
@@ -464,7 +470,7 @@ export default function App() {
                 <ol className="list-decimal pl-5 space-y-2 marker:text-emerald-500">
                   <li><strong>Bottom Copper (.gbr):</strong> Loads the bottom traces. Ensure you use bottom layer so traces are correctly projected.</li>
                   <li><strong>Profile (.gbr):</strong> Board outline and milling data.</li>
-                  <li><strong>Drill (.drl):</strong> Excellon file containing holes.</li>
+                  <li><strong>Drill (.drl, .xln):</strong> Excellon file containing holes.</li>
                   <li><strong>Adjust settings:</strong> Tweak trace expansion, hole size modification, and board parameters.</li>
                   <li><strong>Generate STL:</strong> Slices the data into Constructive Solid Geometry and downloads a ready-to-print file.</li>
                 </ol>
